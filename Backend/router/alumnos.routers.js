@@ -1,43 +1,16 @@
-const alumnos = require("../data/alumnos")
+const express = require("express")
+// const alumnosController = require("../controllers/alumnos.controller")
+const { obtenerAlumnos, obtenerAlumno, crearAlumno, actualizarAlumno, eliminarAlumno } = require("../controllers/alumnos.controller")
+const router = express.Router()
+//get, post, put, delete    
+router.get("/", obtenerAlumnos)
 
-function obtenerAlumnos(req, res){
-    res.json(alumnos)
-}
+router.get("/:id", obtenerAlumno)
 
-function obtenerAlumno(req, res) {
-    const id = Number(req.params.id)
-    const alumno = alumnos.find(a => a.id === id)
-    res.json(alumno)
-}
+router.post("/", crearAlumno) //router.post("/", alumnosController.crearAlumno)
 
-function crearAlumno(req, res) {
-    const nuevoAlumno = req.body
-    alumnos.push(nuevoAlumno)
-    res.json({mensaje: "Alumno registrado correctamente"})
-}
+router.put("/:id", actualizarAlumno)
 
-function actualizarAlumno(req, res) {
-    const id = Number(req.params.id)
-    const alumno = alumnos.find(alumno => alumno.id === id)
+router.delete("/:id", eliminarAlumno)
 
-    alumno.id = req.body.id
-    alumno.nombre = req.body.nombre
-    alumno.carrera = req.body.carrera
-
-    res.json({mensaje: "Alumno actualizado correctamente"})
-}
-
-function eliminarAlumno(req, res) {
-    const id = Number(req.params.id)
-    const alumnosActualizados = alumnos.filter(alumno => alumno.id !== id)
-    alumnos.length = 0
-    alumnos.push(...alumnosActualizados)
-
-    res.json({mensaje: "Alumno eliminado correctamente"})
-}
-
-module.exports = { obtenerAlumnos, 
-    obtenerAlumno, 
-    crearAlumno, 
-    actualizarAlumno,
-    eliminarAlumno }
+module.exports = router

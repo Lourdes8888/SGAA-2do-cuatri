@@ -27,6 +27,8 @@ Actualmente:
 - HTML5
 - JavaScript
 - CSS
+- express
+- node.js
 
 
 Próximamente:
@@ -38,18 +40,35 @@ Próximamente:
 ## Estado del proyecto
 
 - Versión: 
-Clase 10 - Estructura actual
+Clase 12 - Estructura actual
 SGA/
-├── index.html
-├── alumnos.html
-├── docentes.html
-│
-├── css/
-│   └── estilos.css
-│
-└── js/
-    ├── alumnos.js
-    └── docentes.js
+frontend
+ ├── index.html
+ ├── alumnos.html
+ ├── docentes.html
+ │
+ ├── css/
+ │   └── estilos.css
+ │
+ └── js/
+      ├── alumnos.js
+      └── docentes.js
+backend
+
+## Estado actual
+- Página de inicio y navegación entre módulos
+- Módulo alumnos docentes
+- CRUD alumnos/docentes
+- Validaciones de formularios
+- Persistencia mediante localStorage
+- Organización del código y refactorización
+- Separación inicial entre Frontend y Backend
+- implementacion de validaciones para los datos recibidos mediante req.body
+- uso de status 400 para los datos invalidos
+- status 400 para alumno no encontrado 
+- status 404 para alumno no encontrado 
+- status 201 para registrar nuevo alumno 
+- manejo basico de errores en las operaciones del CRUD. 
 
 ## Almacenamiento
 
@@ -59,6 +78,5 @@ SGA/
 
 ## Autor
 
-Irina Agretti
-
-Programación IV
+Lourdes Trosch
+Programacion IV
