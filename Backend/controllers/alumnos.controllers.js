@@ -1,43 +1,125 @@
-const alumnos = require("../data/alumnos")
+const Alumno = require("../models/alumno");
 
-function obtenerAlumnos(req, res){
-    res.json(alumnos)
+async function obtenerAlumnos(req, res) {
+  try {
+    const alumnos = await Alumno.find();
+    res.json(alumnos);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener alumnos", error: error.message });
+  }
 }
 
-function obtenerAlumno(req, res) {
-    const id = Number(req.params.id)
-    const alumno = alumnos.find(a => a.id === id)
-    res.json(alumno)
+async function obtenerAlumno(req, res) {
+  try {
+    const alumno = await Alumno.findOne({ legajo: Number(req.params.id) });
+    if (!alumno) {
+      return res.status(404).json({ mensaje: "Alumno no encontrado" });
+    }
+    res.json(alumno);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener alumno", error: error.message });
+  }
 }
 
-function crearAlumno(req, res) {
-    const nuevoAlumno = req.body
-    alumnos.push(nuevoAlumno)
-    res.json({mensaje: "Alumno registrado correctamente"})
+async function crearAlumno(req, res) {
+  const { legajo, nombre, carrera, correo } = req.body;
+
+  if (!legajo || !nombre || !carrera || !correo) {
+    return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
+  }
+
+  if (typeof nombre !== "string" || nombre.trim() === "") {
+    return res.status(400).json({ mensaje: "El nombre debe ser un texto válido" });
+  }
+
+  if (typeof carrera !== "string" || carrera.trim() === "") {
+    return res.status(400).json({ mensaje: "La carrera debe ser un texto válido" });
+  }
+
+  if (typeof correo !== "string" || !/^\S+@\S+\.\S+$/.test(correo.trim())) {
+    return res.status(400).json({ mensaje: "El correo no es válido" });
+  }
+
+  const legajoNumero = Number(legajo);
+  if (!Number.isInteger(legajoNumero) || legajoNumero <= 0) {
+    return res.status(400).json({ mensaje: "El legajo debe ser un número entero válido" });
+  }
+
+  const existe = await Alumno.findOne({ legajo: legajoNumero });
+  if (existe) {
+    return res.status(400).json({ mensaje: "Ya existe un alumno con ese legajo" });
+  }
+
+  try {
+    const nuevoAlumno = await Alumno.create({
+      legajo: legajoNumero,
+      nombre: nombre.trim(),
+      carrera: carrera.trim(),
+      correo: correo.trim(),
+    });
+    res.status(201).json(nuevoAlumno);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al crear alumno", error: error.message });
+  }
 }
 
-function actualizarAlumno(req, res) {
-    const id = Number(req.params.id)
-    const alumno = alumnos.find(alumno => alumno.id === id)
+async function actualizarAlumno(req, res) {
+  const { nombre, carrera, correo } = req.body;
 
-    alumno.id = req.body.id
-    alumno.nombre = req.body.nombre
-    alumno.carrera = req.body.carrera
+  if (!nombre || !carrera || !correo) {
+    return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
+  }
 
-    res.json({mensaje: "Alumno actualizado correctamente"})
+  if (typeof nombre !== "string" || nombre.trim() === "") {
+    return res.status(400).json({ mensaje: "El nombre debe ser un texto válido" });
+  }
+
+  if (typeof carrera !== "string" || carrera.trim() === "") {
+    return res.status(400).json({ mensaje: "La carrera debe ser un texto válido" });
+  }
+
+  if (typeof correo !== "string" || !/^\S+@\S+\.\S+$/.test(correo.trim())) {
+    return res.status(400).json({ mensaje: "El correo no es válido" });
+  }
+
+  try {
+    const alumno = await Alumno.findOneAndUpdate(
+      { legajo: Number(req.params.id) },
+      {
+        nombre: nombre.trim(),
+        carrera: carrera.trim(),
+        correo: correo.trim(),
+      },
+      { new: true }
+    );
+
+    if (!alumno) {
+      return res.status(404).json({ mensaje: "Alumno no encontrado" });
+    }
+
+    res.json(alumno);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al actualizar alumno", error: error.message });
+  }
 }
 
-function eliminarAlumno(req, res) {
-    const id = Number(req.params.id)
-    const alumnosActualizados = alumnos.filter(alumno => alumno.id !== id)
-    alumnos.length = 0
-    alumnos.push(...alumnosActualizados)
+async function eliminarAlumno(req, res) {
+  try {
+    const alumno = await Alumno.findOneAndDelete({ legajo: Number(req.params.id) });
+    if (!alumno) {
+      return res.status(404).json({ mensaje: "Alumno no encontrado" });
+    }
 
-    res.json({mensaje: "Alumno eliminado correctamente"})
+    res.json({ mensaje: "Alumno eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al eliminar alumno", error: error.message });
+  }
 }
 
-module.exports = { obtenerAlumnos, 
-    obtenerAlumno, 
-    crearAlumno, 
-    actualizarAlumno,
-    eliminarAlumno }
+module.exports = {
+  obtenerAlumnos,
+  obtenerAlumno,
+  crearAlumno,
+  actualizarAlumno,
+  eliminarAlumno,
+};

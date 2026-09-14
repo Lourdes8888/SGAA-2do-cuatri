@@ -1,0 +1,32 @@
+GET http://localhost:3000/alumnos
+
+###
+
+GET http://localhost:3000/alumnos/1001
+
+###
+
+POST http://localhost:3000/alumnos
+Content-Type: application/json
+
+{
+    "legajo": 1008,
+    "nombre": "Lourdes",
+    "carrera": "Programacion",
+    "correo": "lourdes@gmail.com"
+}
+
+###
+
+PUT http://localhost:3000/alumnos/1001
+Content-Type: application/json
+
+{
+    "nombre": "Lucia Actualizada",
+    "carrera": "Ingenieria",
+    "correo": "lucia.nueva@gmail.com"
+}
+
+###
+
+DELETE http://localhost:3000/alumnos/1001
