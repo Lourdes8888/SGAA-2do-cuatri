@@ -1,17 +1,20 @@
-import {useState} from "react";
+import { useState } from "react";
+
 function Mensaje(){
-    const [mensaje, setMensaje] = useState("Hola Alumno")
+    const [mensaje, setMensaje] = useState("Hola, alumno")
 
     function cambiarMensaje(){
-        setMensaje("Bienvenido a programacion IV")
+        setMensaje(mensaje === "Hola, alumno"
+            ? "Bienvenidos a Programación IV"
+            : "Hola, alumno"
+        )
+    }
 
-};
-
-return (
-    <>
-    <h2>{mensaje}</h2>
-    <button onClick={cambiar Mensaje}>Cambiar Mensaje</button>
-    </>
+    return (
+        <>
+        <h2>{mensaje}</h2>
+        <button onClick={cambiarMensaje}>Cambiar Mensaje</button>
+        </>
     )
-
 }
+export default Mensaje

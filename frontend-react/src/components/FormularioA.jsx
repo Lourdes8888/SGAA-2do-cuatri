@@ -1,45 +1,125 @@
 import { useState } from "react";
-function FormularioA() {
-    const [lejago, setLejago] = useState('');
-    const [nombre, setNombre] = useState('');
-    const [carrera, setCarrera] = useState('');
-    const [correo, setCorreo] = useState('');
+const API_ALUMNOS = "http://localhost:3000/alumnos"
 
-    function guardar(e) {
-        e.preventDefault();
-        
-        console.log("Nombre", nombre);
-        console.log("Correo", correo);
+function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
+    const [formulario, setFormulario] = useState({
+        legajo: String(alumnoEditar?.legajo ?? ""),
+        nombre: alumnoEditar?.nombre ?? "",
+        carrera: alumnoEditar?.carrera ?? "",
+        correo: alumnoEditar?.correo ?? ""
+    })
+    const [error, setError] = useState("")
+    const [guardando, setGuardando] = useState(false)
+
+    function manejarCambio(e) {
+        const { name, value} = e.target
+
+        setFormulario({
+            ...formulario,
+            [name]: value
+        })
     }
 
+    async function guardar(e) {
+        e.preventDefault()
+        setError("")
+        setGuardando(true)
+        
+    const alumno = {
+        ...formulario,
+        legajo: Number(formulario.legajo)
+    }
+    const editando = Boolean(alumnoEditar)
+    const url = editando 
+                ? `${API_ALUMNOS}/${alumnoEditar.legajo}`
+                : API_ALUMNOS
+        try {
+            const respuesta = await fetch(url, {
+                method: editando ? "PUT" : "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify(alumno)
+            })
 
-    return (
+            if (!respuesta.ok) {
+                throw new Error(`No se pudo guardar el alumno. Estado HTTP: ${respuesta.status}`)
+            }
+
+            setFormulario({
+                legajo: "",
+                nombre: "",
+                carrera: "",
+                correo: ""
+            })
+            onAlumnoCreado()
+        } catch (error) {
+            console.error("Error al guardar:", error)
+            setError(error.message || "No se pudo conectar con el servidor")
+        } finally {
+            setGuardando(false)
+        }
+    }
+    function cancelar(){
+        onCancelar()
+    }
+    return(
         <>
-        <form onSubmit={guardar}>
-            <input 
-            value={lejago}
-            onChange={(e) => setLejago(e.target.value)}
+        <h2>{alumnoEditar ? "Editar alumno" : "Nuevo Alumno"}</h2>
+        <form className="student-form" onSubmit={guardar}>
+            <label htmlFor="legajo">Legajo</label>
+            <input
+            id="legajo"
+            name="legajo"
+            type="number"
+            min="1"
+            step="1"
+            value={formulario.legajo}
+            onChange={manejarCambio}
+            required
             />
-            <input 
-            value={carrera}
-            onChange={(e) => setCarrera(e.target.value)}
+            <label htmlFor="nombre">Nombre</label>
+            <input
+            id="nombre"
+            name="nombre"
+            value={formulario.nombre}
+            onChange={manejarCambio}
+            required
             />
-             <input           value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            <label htmlFor="carrera">Carrera</label>
+            <input
+            id="carrera"
+            name="carrera"
+            value={formulario.carrera}
+            onChange={manejarCambio}
+            required
             />
-            <input 
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
+            <label htmlFor="correo">Correo</label>
+            <input
+            id="correo"
+            name="correo"
+            type="email"
+            value={formulario.correo}
+            onChange={manejarCambio}
+            required
             />
-            <button type="submit">Guardar</button>
-            </form>
-            <h3>Legajo: {lejago}</h3>
-            <h3>Nombre: {nombre}</h3>
-            <h3>Carrera: {carrera}</h3>
-            <h3>Correo: {correo}</h3>
-            </>
-
-
+            <button type="submit" disabled={guardando}>
+                {guardando 
+                ? "Guardando..." 
+                : alumnoEditar 
+                    ? "Guardar cambios"
+                    : "Guardar"}
+            </button>
+            {alumnoEditar && (
+                <button
+                type="button"
+                onClick={cancelar}
+                disabled={guardando}
+                >
+                    Cancelar
+                </button>
+            )}
+            {error && <p className="form-message is-error" role="alert">{error}</p>}
+        </form>
+        </>
     )
 }
-export default FormularioA;
+export default FormularioA
