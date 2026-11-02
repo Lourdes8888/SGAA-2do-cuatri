@@ -1,25 +1,33 @@
-const express = require("express");
-const conectarBD = require("./config/database");
-const alumnosRoutes = require("./alumnos.routers");
-const connect = require("./config/database");
-require("dotenv").config();
-const PORT = process.env.PORT
-conectarBD()
+require("dotenv").config() 
+
+const express = require("express") 
+const cors = require("cors")
+
+const conectarDB = require("./config/database")
+const alumnosRoutes = require("./routes/alumnos.routes") 
+const docentesRoutes = require("./routes/docentes.routes")
+
+const app = express() 
+
+app.use(express.json()) 
+app.use(cors()) 
+app.use("/alumnos", alumnosRoutes)
+app.use("/docentes", docentesRoutes) //ruta para docentes 
+
+const PORT = process.env.PORT 
+
+conectarDB() //se ejecuta la función para conectar a la base de datos
+
+console.log("Ejecutado con nodemon")
+
+app.listen(PORT, () => { 
+    console.log(`Servidor funcionando en http://localhost:${PORT}`)
+})
 
 
-const app = express();
-app.use(express.json());
-
-conectarBD();
-
-app.use("/alumnos", alumnosRoutes);
-
-app.use((req, res, next) => {
-  console.log(req.method);
-  console.log(req.url);
-  next();
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor funcionando en http://localhost:${PORT}`);
-});
+// Creo un middleware
+// app.use((req, res, next) => {
+//     console.log(req.method)
+//     console.log(req.url)
+//     next()
+// })
