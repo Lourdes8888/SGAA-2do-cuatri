@@ -1,33 +1,33 @@
-require("dotenv").config() 
+require("dotenv").config()
 
-const express = require("express") 
+const express = require("express")
 const cors = require("cors")
-
 const conectarDB = require("./config/database")
-const alumnosRoutes = require("./routes/alumnos.routes") 
-const docentesRoutes = require("./routes/docentes.routes")
+const alumnosRoutes = require("./router/alumnos.routes")
+const docentesRoutes = require("./router/docentes.routers")
+const materiasRoutes = require("./router/Materia.routers")
+const authRoutes = require("./router/authRouters")
 
-const app = express() 
+const app = express()
+const PORT = Number(process.env.PORT) || 3000
 
-app.use(express.json()) 
-app.use(cors()) 
+app.use(express.json())
+app.use(cors())
 app.use("/alumnos", alumnosRoutes)
-app.use("/docentes", docentesRoutes) //ruta para docentes 
+app.use("/docentes", docentesRoutes)
+app.use("/materias", materiasRoutes)
+app.use("/auth", authRoutes)
 
-const PORT = process.env.PORT 
+async function iniciarServidor() {
+  try {
+    await conectarDB()
+    app.listen(PORT, () => {
+      console.log(`Servidor funcionando en http://localhost:${PORT}`)
+    })
+  } catch (error) {
+    console.error("No se pudo iniciar el servidor:", error.message)
+    process.exitCode = 1
+  }
+}
 
-conectarDB() //se ejecuta la función para conectar a la base de datos
-
-console.log("Ejecutado con nodemon")
-
-app.listen(PORT, () => { 
-    console.log(`Servidor funcionando en http://localhost:${PORT}`)
-})
-
-
-// Creo un middleware
-// app.use((req, res, next) => {
-//     console.log(req.method)
-//     console.log(req.url)
-//     next()
-// })
+iniciarServidor()

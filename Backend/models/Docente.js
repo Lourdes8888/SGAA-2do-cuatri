@@ -6,7 +6,7 @@ const docenteSchema = new mongoose.Schema({
         unique: true 
     },
     nombre: String,
-    carrera: String,
+    especialidad: String,
     correo: String
 },
 { 

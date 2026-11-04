@@ -1,11 +1,10 @@
 const express = require("express") 
-// const docentesController = require("../controllers/docentes.controller")
 const { 
     obtenerDocentes, 
     obtenerDocente, 
     crearDocente, 
     actualizarDocente, 
-    eliminarDocente } = require("../controllers/docente.controller")
+    eliminarDocente } = require("../controllers/docentes.controllers")
 const router = express.Router() 
 
 router.get("/", obtenerDocentes) 

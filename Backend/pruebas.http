@@ -45,3 +45,59 @@ Content-Type: application/json
     "especializacion" : "Programación",
     "correo": "juan@mail.com"
 }
+
+### Obtener todas las materias
+GET http://localhost:3000/materias
+
+### Obtener una materia por código
+GET http://localhost:3000/materias/PRG1
+
+### Registrar materia válida
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+  "codigo": "PRG1",
+  "nombre": "Programación I",
+  "descripcion": "Introducción a la programación",
+  "cargaHoraria": 6,
+  "estado": "activa"
+}
+
+### Registrar materia con código duplicado
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+  "codigo": "PRG1",
+  "nombre": "Otra materia",
+  "descripcion": "Materia duplicada",
+  "cargaHoraria": 4,
+  "estado": "inactiva"
+}
+
+### Registrar materia con carga horaria inválida
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+  "codigo": "PRG2",
+  "nombre": "Base de datos",
+  "descripcion": "Laboratorio de DB",
+  "cargaHoraria": 0,
+  "estado": "activa"
+}
+
+### Modificar una materia
+PUT http://localhost:3000/materias/PRG1
+Content-Type: application/json
+
+{
+  "nombre": "Programación I actualizada",
+  "descripcion": "Se actualizó la descripción",
+  "cargaHoraria": 8,
+  "estado": "activa"
+}
+
+### Eliminar una materia
+DELETE http://localhost:3000/materias/PRG1
